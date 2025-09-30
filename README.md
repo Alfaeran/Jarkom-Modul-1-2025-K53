@@ -1,4 +1,4 @@
-<img width="1388" height="145" alt="image" src="https://github.com/user-attachments/assets/5fae7701-01ab-404c-9c40-c1a0d60cfdf8" /># Jarkom-Modul-1-2025-K53
+# Jarkom-Modul-1-2025-K53
 
 # Laporan Resmi Modul 1 
 
