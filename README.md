@@ -1174,3 +1174,95 @@ The flag is:
 Congratulations! Here is your flag: KOMJAR25{Y0u_4re_g0dl1ke_l89NvJJPkzaw4mdKGW83YZXFh}
 ```
 
+## 19
+
+**Manwe mengirimkan email berisi surat cinta kepada Varda melalui koneksi yang tidak terenkripsi. Melihat hal itu Melkor sipaling jahat langsung melancarkan aksinya yaitu meneror Varda dengan email yang disamarkan. Analisis file capture jaringan dan gagalkan lagi rencana busuk Melkor.**
+
+**Langkah awal sama seperti sebelumnya!**
+
+To search for email traffic in Wireshark, focus on specific protocols commonly used for email communication.
+
+Key Protocols:
+
+SMTP (Simple Mail Transfer Protocol): Used for sending emails. Filter by smtp in Wireshark.
+POP3 (Post Office Protocol version 3): Used for retrieving emails from a server. Filter by pop or pop3.
+IMAP (Internet Message Access Protocol): Also used for retrieving emails, allowing more complex interactions. Filter by imap.
+
+<br><img width="2879" height="1554" alt="image" src="https://github.com/user-attachments/assets/7f2a8e50-871c-4b7d-b9b6-7df7a82cd562" /></br>
+
+Search for suspicious massage:
+<br><img width="2879" height="322" alt="image" src="https://github.com/user-attachments/assets/89bc7e3f-a28a-46e5-b82c-aa9764541f69" /></br>
+
+go stream to get information:
+<br><img width="2844" height="1691" alt="image" src="https://github.com/user-attachments/assets/7d6eb488-6511-4d09-a139-dc43c865f2e3" /></br>
+
+**Who sent the threatening message?
+Format: string (name)**
+
+by the search that we've done, the answer is:
+<br><img width="693" height="128" alt="image" src="https://github.com/user-attachments/assets/779bb3da-de2f-4744-b710-2429812ecf8c" /></br>
+
+**How much ransom did the attacker demand ($)?
+Format: int**
+
+the answer is:
+<br><img width="981" height="128" alt="image" src="https://github.com/user-attachments/assets/ef03deb6-b030-4fb7-9b86-9894900f0694" /></br>
+
+**What is the attacker's bitcoin wallet?
+Format: string**
+
+the answer is:
+<br><img width="1791" height="217" alt="image" src="https://github.com/user-attachments/assets/54796558-c4da-4521-8a6c-8b9992d4d97a" /></br>
+
+the flag that we get:
+```c
+Congratulations! Here is your flag: KOMJAR25{Y0u_4re_J4rk0m_G0d_ldwEDOqHBrgLpThYpnVaba7ep}
+```
+
+## 20
+
+**Untuk yang terakhir kalinya, rencana besar Melkor yaitu menanamkan sebuah file berbahaya kemudian menyembunyikannya agar tidak terlihat oleh Eru. Tetapi Manwe yang sudah merasakan adanya niat jahat dari Melkor, ia menyisipkan bantuan untuk mengungkapkan rencana Melkor. Analisis file capture dan identifikasi kegunaan bantuan yang diberikan oleh Manwe untuk menggagalkan rencana jahat Melkor selamanya.**
+
+**Step awal sama seperti sebelumnya**
+
+<br><img width="2879" height="1514" alt="image" src="https://github.com/user-attachments/assets/58bfc906-49d6-4ec4-93a1-df468e8d8598" /></br>
+
+from the quest description and wireshark we could know that the file was being encrypted so if u realize when u unzip the file for the quest, we get keylogs for decrypt:
+<br><img width="1812" height="699" alt="image" src="https://github.com/user-attachments/assets/ac60a079-e223-4cae-93c5-9f91caa3dac0" /></br>
+
+now use edit by preferences
+<br><img width="2302" height="1307" alt="image" src="https://github.com/user-attachments/assets/6ee801ab-61f8-4794-bdfc-a1508e6427df" /></br>
+
+search for tls at protocol
+<br><img width="1465" height="1171" alt="image" src="https://github.com/user-attachments/assets/d6ce3e9f-d073-4012-b8b0-904c47427b24" /></br>
+
+and browse master keylog using the file from unzipped file
+<br><img width="1377" height="912" alt="image" src="https://github.com/user-attachments/assets/2eeee097-9efd-4e49-9ea5-3ec6cc4c2e1b" /></br>
+
+and xxport objects http to see the file:
+<br><img width="1467" height="1038" alt="image" src="https://github.com/user-attachments/assets/44db8076-bc26-4622-b63c-5cdfc42d785d" /></br>
+
+**What encryption method is used?
+Format: string**
+
+the answer is: 
+<br><img width="624" height="166" alt="image" src="https://github.com/user-attachments/assets/fd223b50-2c76-432d-b0a5-588182a828cd" /></br>
+
+**
+What is the name of the malicious file placed by the attacker?
+Format: file.exe**
+
+the answer is:
+<br><img width="1223" height="129" alt="image" src="https://github.com/user-attachments/assets/f7581fbe-02bc-45f2-8431-47ca351926d6" /></br>
+
+**What is the hash of the file containing the malware?
+Format: sha256**
+
+use sha256sum:
+<br><img width="1586" height="187" alt="image" src="https://github.com/user-attachments/assets/318e412a-b73b-4d7c-a9db-0ade85f5036b" /></br>
+the answer is:
+<br><img width="1720" height="197" alt="image" src="https://github.com/user-attachments/assets/aa7d3d20-3085-48e1-83e4-365eeb07bea2" /></br>
+the flag is:
+```c
+Congratulations! Here is your flag: KOMJAR25{B3ware_0f_M4lw4re_FnJynVC0XoZ3EipbqIDdAoUCu}
+```
