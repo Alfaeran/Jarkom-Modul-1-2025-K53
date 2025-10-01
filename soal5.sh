@@ -1,0 +1,1 @@
+# semua script dimasukkan ke /root/.bashrc (VM) agar otomatis dijalankan saat terminal dibuka
