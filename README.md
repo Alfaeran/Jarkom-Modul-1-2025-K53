@@ -26,6 +26,59 @@ iface eth2 inet static
 	address 10.90.2.1
 	netmask 255.255.255.0
 ```
+(saya memakai VMware Kali Linux)
+Pada terminal, Telnet ke Node Eru lalu jalankan
+
+```
+apt update && apt install iptables -y
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.90.0.0/16
+```
+
+## 3
+
+Edit network configurations pada Node
+
+- Melkor
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.1.2
+	netmask 255.255.255.0
+	gateway 10.90.1.1
+  ```
+- Manwe
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.1.3
+	netmask 255.255.255.0
+	gateway 10.90.1.1
+  ```
+- Varda
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.2.2
+	netmask 255.255.255.0
+	gateway 10.90.2.1
+  ```
+- Ulmo
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.2.3
+	netmask 255.255.255.0
+	gateway 10.90.2.1
+  ```
+
+## 4
+
+### Di Node Eru, jalankan 
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+ping google.com
+```
+jika berhasil, CTRL+C untuk stop
 
 ## No 14-20
 
