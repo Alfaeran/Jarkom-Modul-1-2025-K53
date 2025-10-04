@@ -2,6 +2,15 @@
 
 # Laporan Resmi Modul 1 
 
+## No 1-13
+
+## 1
+
+<img width="924" height="621" alt="image" src="https://github.com/user-attachments/assets/0d98a8aa-dcb7-4274-a0c2-50b9786f7179" />
+
+## 2
+
+
 ## No 14-20
 
 ## 14 
