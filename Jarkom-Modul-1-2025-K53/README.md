@@ -2,6 +2,384 @@
 
 # Laporan Resmi Modul 1 
 
+## No 1-13
+
+## 1
+
+<img width="924" height="621" alt="image" src="https://github.com/user-attachments/assets/0d98a8aa-dcb7-4274-a0c2-50b9786f7179" />
+
+## 2
+
+Pada GNS3, klik kanan node eru lalu masuk ke configurations. Setelah itu, klik edit pada network configurations dan masukkan 
+
+```
+auto eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+	address 10.90.1.1
+	netmask 255.255.255.0
+
+auto eth2
+iface eth2 inet static
+	address 10.90.2.1
+	netmask 255.255.255.0
+```
+(saya memakai VMware Kali Linux)
+Pada terminal, Telnet ke Node Eru lalu jalankan
+
+```
+apt update && apt install iptables -y
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.90.0.0/16
+```
+
+## 3
+
+Edit network configurations pada Node
+
+- Melkor
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.1.2
+	netmask 255.255.255.0
+	gateway 10.90.1.1
+  ```
+- Manwe
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.1.3
+	netmask 255.255.255.0
+	gateway 10.90.1.1
+  ```
+- Varda
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.2.2
+	netmask 255.255.255.0
+	gateway 10.90.2.1
+  ```
+- Ulmo
+  ```
+  auto eth0
+  iface eth0 inet static
+	address 10.90.2.3
+	netmask 255.255.255.0
+	gateway 10.90.2.1
+  ```
+
+## 4
+
+Di Node Eru, jalankan 
+```
+echo "nameserver 192.168.122.1" > /etc/resolv.conf
+ping google.com
+```
+jika berhasil, CTRL+C untuk stop
+
+## 5
+
+Pada Node Eru,
+```
+apt update && apt install iptables -y
+iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 10.90.0.0/16
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+```
+Masukkan script diatas agar konfigurasi tidak hilang setelah direstart
+
+## 6
+
+Pada Node Manwe, jalankan
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=1bE3kF1Nclw0VyKq4bL2VtOOt53IC7lG5' -O traffic.zip
+```
+untuk mengunduh file dari link drive yang telah diberikan dan merename filenya menjadi traffic.zip
+
+```
+apt update && apt install unzip -y
+```
+untuk menginstall program unzip
+
+```
+unzip traffic.zip
+```
+mengextract file yang ada di traffic.zip (traffic.sh)
+```
+chmod  +x traffic.sh
+```
+Untuk membuat file traffic.sh bisa dieksekusi atau dijalankan sebagai program.
+
+```
+./traffic.sh
+```
+menjalankan file traffic.sh
+
+### Hasil Capture :
+
+<img width="1919" height="1078" alt="image" src="https://github.com/user-attachments/assets/59b5f01d-183d-48f0-bfba-8e8b6294d253" />
+
+Gambar tersebut adalah rekaman aktivitas jaringan yang menunjukkan sebuah komputer (10.90.1.3) sedang aktif menggunakan internet. Dari gambar tersebut, terlihat bahwa komputer sedang mencari alamat IP sebuah website (DNS), lalu membuka koneksi untuk browsing ke web tersebut (TCP), sambil sesekali melakukan tes koneksi ping (ICMP) untuk memastikan jaringannya stabil.
+
+## 7
+
+Pada Node Eru, jalankan
+```
+apt update && apt install vsftpd -y && apt install ftp -y
+```
+Instalasi software FTP server (vsftpd) dan FTP client (ftp).
+
+```
+adduser ainur
+adduser melkor
+```
+Membuat dua pengguna sistem baru, yaitu ainur dan melkor.
+
+```
+mkdir -p /home/ainur/ftp/shared
+chown -R ainur:ainur /home/ainur/ftp/shared/
+```
+Membuatkan folder shared untuk ainur dan memberinya kepemilikan penuh, sehingga ia bisa menulis dan membaca file di dalamnya.
+
+```
+mkdir -p /home/melkor/ftp/shared
+chown -R root:root /home/melkor/ftp/shared/
+chmod 755 /home/melkor/ftp/shared/
+```
+Membuatkan folder shared untuk melkor, tetapi kepemilikannya diberikan kepada root dan hak aksesnya diatur agar Melkor hanya bisa membaca isinya, tidak bisa menulis.
+
+```
+pkill vsftpd
+service vsftpd start
+```
+Mematikan paksa dan memulai ulang layanan FTP untuk menerapkan konfigurasi awal.
+
+setelah itu, jalankan
+```
+nano /etc/vsftpd.conf
+```
+lalu masukkan konfigurasi berupa 
+```
+listen=YES
+listen_ipv6=NO
+anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+chroot_local_user=YES
+allow_writeable_chroot=YES
+dirmessage_enable=YES
+use_localtime=YES
+xferlog_enable=YES
+connect_from_port_20=YES
+secure_chroot_dir=/var/run/vsftpd/empty
+pam_service_name=vsftpd
+rsa_cert_file=/etc/ssl/certs/ssl-cert-snakeoil.pem
+rsa_private_key_file=/etc/ssl/private/ssl-cert-snakeoil.key
+ssl_enable=NO
+user_sub_token=$USER
+local_root=/home/$USER/ftp
+userlist_enable=YES
+userlist_file=/etc/vsftpd.user_list
+userlist_deny=YES
+```
+Lalu, buat file bebas di folder shared
+```
+echo "p" > /home/ainur/ftp/shared/test.txt
+echo "p" > /home/melkor/ftp/shared/test.txt
+```
+setelah itu jalankan vsftpd
+```
+service vsftpd start
+```
+
+Pada Node Melkor, jalankan
+```
+ftp 10.90.1.1
+```
+untuk masuk/terhubung ke node eru dan login dengan user ainur.
+
+Setelah itu, jalankan
+```
+ftp> ascii
+ftp> get test.txt
+ftp> put tes.txt
+```
+untuk mengecek apakah sudah sesuai dengan ketentuannya. Jika keduanya berhasil, maka sudah sesuai.
+![WhatsApp Image 2025-09-29 at 23 01 55_dfc36577](https://github.com/user-attachments/assets/a94dac17-8195-4e60-b086-e963494923e6)
+
+
+Login menggunakan user melkor. Jika tidak berhasil, maka sudah sesuai.
+![WhatsApp Image 2025-09-29 at 23 00 53_1fa3df27](https://github.com/user-attachments/assets/d6a58b24-9ebd-4848-8aee-4b7c36e73840)
+
+## 8
+
+Pada Node Ulmo, jalankan
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=11ra_yTV_adsPIXeIPMSt0vrxCBZu0r33' -O cuaca.zip
+```
+untuk mengunduh file dari link drive yang telah diberikan dan merename filenya menjadi cuaca.zip
+
+```
+apt update && apt install unzip -y
+```
+untuk memasang program unzip
+
+```
+unzip cuaca.zip
+```
+mengextract file yang ada di cuaca.zip
+
+```
+ftp 10.90.1.1
+```
+Memulai koneksi dengan Node Eru
+
+```
+cd shared
+put cuaca.txt
+put mendung.jpg
+```
+Di dalam sesi FTP, perintah cd shared digunakan untuk pindah ke direktori shared di server. Setelah itu, put cuaca.txt dan put mendung.jpg masing-masing mengunggah kedua file tersebut dari komputermu ke direktori shared di server.
+
+![WhatsApp Image 2025-09-30 at 16 35 44_cd9c43eb](https://github.com/user-attachments/assets/2d0af564-e5b1-4da2-9351-a41071afc1b7)
+Rekaman ini menunjukkan seluruh proses transfer file yang sukses, mulai dari login pengguna 'ainur' hingga pengunggahan file cuaca.txt dan mendung.jpg ke dalam direktori ftp/shared di server.
+
+## 9
+
+Pada Node Eru, jalankan
+```
+wget --no-check-certificate 'https://docs.google.com/uc?export=download&id=11ua2KgBu3MnHEIjhBnzqqv2RMEiJsILY' -O kitab_penciptaan.zip
+apt update && apt install unzip -y
+unzip kitab_penciptaan.zip
+```
+sama dengan sebelum-sebelumnya, ini untuk mendapatkan serta mengextract file zip dari drive yang telah diberikan
+
+Pada Node Manwe, jalankan
+```
+ftp 10.90.1.1
+```
+setelah terhubung ke eru, login ke user ainur.
+
+```
+ftp> get kitab_penciptaan.txt
+ftp> put kitab_penciptaan.txt 
+```
+jika berhasil, maka fungsi get akan bisa dijalankan. Sebaliknya, fungsi put tidak bisa dijalankan
+
+
+<img width="1280" height="508" alt="image" src="https://github.com/user-attachments/assets/16c8c950-ea61-4898-b6d9-c886f5ddecd4" />
+
+Berdasarkan rekaman tersebut, pemantauan koneksi menunjukkan bahwa pengguna 'ainur' berhasil menggunakan perintah RETR untuk mengunduh file kitab_penciptaan.txt, namun gagal saat menguji akses tulis karena perintah STOR (upload) dan DELE (hapus) ditolak oleh server.
+
+## 10
+
+Pada Melkor jalankan
+```
+ping -c 100 10.90.1.1
+```
+Nge-ping IP 10.90.1.1 sebanyak 100 kali, lalu otomatis berhenti.
+
+![WhatsApp Image 2025-09-30 at 18 18 31_c9408353](https://github.com/user-attachments/assets/48668a9e-bbbe-4111-b2e7-f208c131971e)
+- tidak ada packet loss
+- Average RTT : 0.315ms
+Karena tidak ada packet loss dan nilai average RTT masih sangat rendah, serangan ping 100 paket tidak mempengaruhi kinerja Eru.
+
+## 11
+
+Pada Node Melkor, tambahkan user dengan
+```
+adduser eru
+```
+
+lalu jalankan
+```
+apt update && apt install openbsd-inetd telnetd -y
+nano /etc/inetd.conf
+```
+Memasang program server Telnet dan Membuka file konfigurasi untuk diedit. Tambahkan telnet stream tcp nowait root /usr/sbin/tcpd /usr/sbin/telnetd pada konfigurasi untuk Ini adalah baris konfigurasi untuk super-server inetd yang memberitahu sistem: "Saat ada koneksi masuk di port Telnet, jalankan program server Telnet (/usr/sbin/telnetd) untuk melayani pengguna tersebut."
+
+
+
+```
+service openbsd-inetd restart
+```
+Menjalankan server Telnet dengan konfigurasi baru
+
+Pada Node eru, jalankan
+```
+apt update && apt install openbsd-inetd telnetd -y
+apt update && apt install telnet -y 
+```
+Memasang program server Telnet dan client Telnet agar bisa terhubung ke server
+
+lalu hubungan ke server melkor dengan
+```
+telnet 10.90.1.2 
+```
+
+<img width="1914" height="603" alt="image" src="https://github.com/user-attachments/assets/21ffccd3-0a9e-4200-a78a-e7441e0ad55d" />
+rekaman ini menampilkan jejak lengkap sesi Telnet antara dua komputer, yang diawali dengan negosiasi aturan koneksi dan dilanjutkan dengan transmisi data yang menunjukkan setiap karakter yang diketik dikirim sebagai paket data tersendiri
+
+## 12
+
+Pada Melkor, jalankan
+```
+apt update && apt install vsftpd -y
+```
+Memasang software server FTP bernama vsftpd
+
+```
+apt install apache2
+```
+memasang server web Apache
+
+```
+service vsftpd start
+```
+menjalankan layanan server FTP yand sudah dipasang
+
+```
+service apache2 start
+```
+menjalankan layanan server web Apache
+
+Lalu pada Node Eru, jalankan
+```
+apt update && apt install netcat-traditional -y
+```
+Memasang netcat untuk pemindaian jaringan
+
+```
+nc -zv 10.90.1.2 21 80 666
+```
+Perintah ini menggunakan Netcat (nc) untuk memindai port di alamat IP 10.90.1.2. Secara spesifik, ia memeriksa apakah port 21 (FTP), 80 (HTTP), dan 666 dalam keadaan terbuka atau tidak
+
+<img width="425" height="65" alt="image" src="https://github.com/user-attachments/assets/dbdffa96-6875-4f27-bf52-855bce6f4e4d" />
+disitu terlihat bahwa port 21 dan 80 terbuka, sedangkan 666 tertutup (tidak ditampilkan)
+
+## 13
+
+Pada Node Eru, jalankan
+```
+apt update && apt install openssh-server
+service ssh start
+service ssh enable
+```
+Bertujuan untuk memasang software server SSH, menjalankan layanan SSH, dan membuat layanan SSH dapat berjalan
+
+Pada Node Varda, jalankan
+```
+echo nameserver 192.168.122.1 > /etc/resolv.conf
+apt update && apt install openssh-server
+ssh eru@10.90.1.1
+```
+Bertujuan untuk mengatur DNS server, memasang software OpenSSH server, lalu langsung mencoba menjadi klien untuk terhubung ke server SSH lain.
+
+<img width="1903" height="939" alt="image" src="https://github.com/user-attachments/assets/ec4427d1-0daa-47ee-ada0-efb06c56502a" />
+rekaman ini membuktikan keamanan koneksi SSH dengan menunjukkan bagaimana setelah proses pertukaran kunci enkripsi di awal, seluruh data selanjutnya—termasuk username dan password—dikirim dalam bentuk paket-paket terenkripsi yang isinya tidak dapat dibaca.
+
 ## No 14-20
 
 ## 14 
